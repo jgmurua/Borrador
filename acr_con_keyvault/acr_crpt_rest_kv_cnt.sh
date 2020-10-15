@@ -131,7 +131,7 @@ az keyvault secret set \
 
 #2 secrets -------------------------------------------- end
 
-
+sleep(60)
 
 #Container 
 #https://docs.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest

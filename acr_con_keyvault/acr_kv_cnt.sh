@@ -6,16 +6,16 @@ location="southcentralus"
 #Resource Group name
 rgName="rg-tst-dev"
 #ACR name
-crName="acrtstdev"
+crName="acrtstdex"
 #key vault name
-kvName="mikvault9lo"
+kvName="mikvaulxlo"
 #identity name
-idttName="idntacr-dev01"
+idttName="idntacr-dex03"
 #key name
-keyAcrName="acrkey10"
+keyAcrName="acrkeyx0"
 
 #container
-NameContainer="miapp"
+NameContainer="miapx"
 ImgContainer="docker.io/jgmurua/repojuan:latest"
 imgCntx="repojuan:latest" 							#correjir#
 imgrepo="repojuan"
@@ -24,18 +24,14 @@ CpuUn=1
 PortOpn="80"
 
 
-#with encription at rest
+#without encription at rest
 
+#create identity 
 az identity create \
   --resource-group $rgName \
   --name $idttName 
-
-#get the id's
-identityID=$(az identity show \
-  --resource-group $rgName \
-  --name $idttName \
-  --query 'id' --output tsv)
-
+  
+#get the identity
 identityPrincipalID=$(az identity show \
   --resource-group $rgName \
   --name $idttName \
@@ -48,12 +44,6 @@ az keyvault create --name $kvName \
   --enable-soft-delete true \
   --enable-purge-protection true
 
-#get keyvault id
-keyvaultID=$(az keyvault show \
-  --resource-group $rgName \
-  --name $kvName \
-  --query 'id' --output tsv)
-
 #enable key access
 az keyvault set-policy \
   --resource-group $rgName \
@@ -61,25 +51,12 @@ az keyvault set-policy \
   --object-id $identityPrincipalID \
   --key-permissions get unwrapKey wrapKey
 
-#Now create a key
-az keyvault key create \
-  --name $keyAcrName \
-  --vault-name $kvName
-
-#get the key id
-keyID=$(az keyvault key show \
-  --name $keyAcrName \
-  --vault-name $kvName \
-  --query 'key.kid' --output tsv)
-
 
 #Now Create the ACR
 az acr create \
   --resource-group $rgName \
   --name $crName\
-  --identity $identityID \
-  --key-encryption-key $keyID \
-  --sku Premium
+  --sku Basic
 
 #Put a docker image in ACR
 az acr import \
