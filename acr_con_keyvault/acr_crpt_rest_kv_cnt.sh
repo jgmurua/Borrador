@@ -23,6 +23,10 @@ MemRamGb=1
 CpuUn=1
 PortOpn="80"
 
+#aks
+AksCluster="akluster"
+AkNodes=1
+
 
 #with encription at rest
 
@@ -149,6 +153,13 @@ az container create \
   
 
 #Create an AKS
+az aks create \
+  --resource-group $rgName \
+  --name $AksCluster \
+  --node-count $AkNodes \
+  --enable-addons monitoring \
+  --generate-ssh-keys
+  
 
 
 
