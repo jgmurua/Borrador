@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: micc-deployment
+  labels:
+    app: micc-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: micc
+  template:
+    metadata:
+      labels:
+        app: micc
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: micc
+        image: jgmurua/repojuan  # ok desde dockerhub
+#        image: acrjuanxyz.azurecr.io/repojuan   # ok con usr/pass secretos directo a acr
+#        image: apimxrz.azure-api.net/repojuan   # no anda a traves de apim
+        ports:
+        - containerPort: 80

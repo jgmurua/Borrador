@@ -1,0 +1,66 @@
+acr (premium para que use vnet)
+ |
+ |nombre.azurecr.io -> endpoint privado
+ |
+crear api que encapsule al acr - import <swagger.yaml> (aca carga las operaciones api de acr * )  -> backend endpoint 
+ |
+ |
+apim - aporta alguna medida extra de seguridad ej token 
+ |
+ |
+pull desde acr por api (se define - secret docker-registry nombre - <- token ** ) 
+ |
+ |
+AKS
+
+
+* https://github.com/Azure/acr-cli/blob/main/docs/swagger.yaml
+** - https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+
+
+
+
+
+-------------------------------------- probando -----
+
+
+#Claves de acceso
+
+docker login -u tkpull -p XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX acrXXXXX.azurecr.io
+  
+
+
+--x-x-x-x-x-x-x-x-x-x-x-x-x-x-x
+
+cat > config.json << EOF
+ 
+{
+    "auths": {
+        "https://apimXXXXXXXXXXXXXXXXX.azure-api.net/v1/": {
+            "auth": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        }
+    }
+}
+
+EOF
+
+esto no funciono --> el token auth en doker registry debe ser (echo -n 'username:password' | base64) y 
+estaba usando el token de coneccion a apim
+
+kubectl create secret generic regcred --from-file=.dockerconfigjson="config.json" --type=kubernetes.io/dockerconfigjson
+
+-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x
+
+
+--------------------------
+#esto si funciono
+#crea un secreto para tomar imagen directamente del acr con el usuario tkpull
+
+$regServ="XXXX.azurecr.io"
+$dkuserpull="tkpull"
+$dkpasspull="XXXXXXXXXXXXXXXXXXXXXXX"
+$email="XXXXXXXXX@outlook.com"
+
+kubectl create secret docker-registry regcred --docker-server=$regServ --docker-username=$dkuserpull --docker-password=$dkpasspull --docker-email=$email
+
+------------------------------
